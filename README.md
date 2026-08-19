@@ -23,35 +23,112 @@ Save results and capture simulation screenshots.
 # VERILOG CODE
 SR Flip-Flop (Non Blocking)
 ```
-module sr_ff (
-    input wire S, R, clk,
-    output reg Q
-);
-    always @(posedge clk) begin
 
+`timescale 1ns / 1ps
 
-
+module sr_ff(S,R,clk,rst,Q);
+input S,R,clk,rst;
+output reg Q;
+always @(posedge clk)
+begin
+if (rst==1)
+    Q=0;
+else    
+    begin
+        case({S,R})
+            2'b00: Q<= Q;
+            2'b01: Q<= 1'b0;
+            2'b10: Q<= 1'b1;
+            2'b11: Q<= 1'bX;
+        endcase
+     end
+end
 endmodule
+
 ```
 SR Flip-Flop Test bench
+```
 
+`timescale 1ns / 1ps
+
+module jk_ff(J,K,clk,rst,Q);
+input J,K,clk,rst;
+output reg Q;
+always @(posedge clk)
+begin
+if (rst==0)
+    Q = 0;
+else
+    begin
+        case({J,K})
+            2'b00: Q <= Q;
+            2'b01: Q <= 1'b0;
+            2'b10: Q <= 1'b1;
+            2'b01: Q <= ~Q;
+        endcase
+    end
+end
+endmodule
+
+```
 SIMULATION OUTPUT
 ------- paste the output here -------
 
 JK Flip-Flop (Non Blocking)
 ```
-module jk_ff (
-    input wire J, K, clk,
-    output reg Q
-);
-    always @(posedge clk) begin
 
+`timescale 1ns / 1ps
 
+module jk_ff(J,K,clk,rst,Q);
+input J,K,clk,rst;
+output reg Q;
+always @(posedge clk)
+begin
+if (rst==0)
+    Q = 0;
+else
+    begin
+        case({J,K})
+            2'b00: Q <= Q;
+            2'b01: Q <= 1'b0;
+            2'b10: Q <= 1'b1;
+            2'b01: Q <= ~Q;
+        endcase
+    end
+end
+endmodule
+
+```
+JK Flip-Flop Test bench
+```
+`timescale 1ns / 1ps
+
+module jk_ff_tb;
+
+reg J, K, clk, rst;
+wire Q;
+
+jk_ff uut(J, K, clk, rst, Q);
+
+always #5 clk = ~clk;
+
+initial
+begin
+    J = 0;
+    K = 0;
+    clk = 0;
+    rst = 1;
+
+    #10 rst = 0;
+    #10 J = 0; K = 0;
+    #10 J = 0; K = 1;
+    #10 J = 1; K = 0;
+    #10 J = 1; K = 1;
+    #10 $finish;
+end
 
 endmodule
 ```
-JK Flip-Flop Test bench
-
 SIMULATION OUTPUT
 ------- paste the output here -------
 
@@ -74,18 +151,49 @@ SIMULATION OUTPUT
 
 T Flip-Flop (Non Blocking)
 ```
-module d_ff (
-    input wire d,clk,
-    output reg Q
-);
-    always @(posedge clk) begin
 
+timescale 1ns / 1ps
 
+module d_ff(D,clk,rst,Q);
+input D,clk,rst;
+output reg Q;
+always @(posedge clk)
+begin
+if (rst==1)
+    Q<=0;
+else
+    Q<=D;
+end
+endmodule
+
+```
+T Flip-Flop Test bench
+```
+`timescale 1ns / 1ps
+
+module d_ff_tb;
+
+reg D, rst, clk;
+wire Q;
+
+d_ff uut(D, clk, rst, Q);
+
+always #5 clk = ~clk;
+
+initial
+begin
+    D = 0;
+    clk = 0;
+    rst = 1;
+
+    #10 rst = 0;
+    #10 D = 0;
+    #20 D = 1;
+    #20 $finish;
+end
 
 endmodule
 ```
-T Flip-Flop Test bench
-
 SIMULATION OUTPUT
 ------- paste the output here -------
 
